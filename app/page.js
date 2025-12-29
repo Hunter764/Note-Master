@@ -3,14 +3,19 @@ import connectDB from "@/lib/db";
 import Note from "@/models/Note";
 
 async function getNotes(){
-  await connectDB();
-  const notes = await Note.find({}).sort({ createdAt: -1 }).lean();
-  return notes.map((note) => ({
-    ...note,
-    _id: note._id.toString(),
-    createdAt: note.createdAt.toISOString(),
-    updatedAt: note.updatedAt.toISOString(),
-  }));
+  try {
+    await connectDB();
+    const notes = await Note.find({}).sort({ createdAt: -1 }).lean();
+    return notes.map((note) => ({
+      ...note,
+      _id: note._id.toString(),
+      createdAt: note.createdAt.toISOString(),
+      updatedAt: note.updatedAt.toISOString(),
+    }));
+  } catch (error) {
+    console.error("Error fetching notes:", error.message);
+    return [];
+  }
 }
 
 export default async  function Home() {
